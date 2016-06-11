@@ -22,7 +22,6 @@ import java.util.logging.Logger;
 public class ContactWriter implements CommandHandler {
 
     public List<Contact> list = new ArrayList();
-    public Contact contact = new Contact();
     public Scanner scanner = new Scanner(System.in);
     public String name;
     public String number;
@@ -47,13 +46,17 @@ public class ContactWriter implements CommandHandler {
             printCommands();
 
             //System.out.println("enter command");
-            command = scanner.nextLine();
-            if (command.equals("add")) {
-                addContact();
+            command = scanner.nextLine().toLowerCase();
+
+            switch (command) {
+                case "add":
+                    addContact();
+                    break;
+                case "print":
+                    printContacts();
+                    break;
             }
-            if (command.equals("print")) {
-                printContacts();
-            }
+
             if (command.equals("write to the file")) {
                 writeFile();
             }
@@ -93,7 +96,9 @@ public class ContactWriter implements CommandHandler {
     @Override
     public void addContact() {
         System.out.println("Create a new contact");
-        list.add(contact);
+
+        Contact contact = new Contact();
+
         System.out.println("Enter name");
         name = scanner.nextLine();
         contact.setName(name);
@@ -110,58 +115,66 @@ public class ContactWriter implements CommandHandler {
         id = scanner.nextLine();
         contact.setId(id);
 
+        list.add(contact);
+
     }
 
     @Override
     public void printContacts() {
-        System.out.println("Contacts printed...");
-        System.out.println(contact.getName());
-        System.out.println(contact.getNumber());
-        System.out.println(contact.getE_mail());
-        System.out.println(contact.getSkype());
-        System.out.println(contact.getId());
+        for (Contact contact : list) {
+
+            System.out.println("Contacts printed...");
+            System.out.println(contact.getName());
+            System.out.println(contact.getNumber());
+            System.out.println(contact.getE_mail());
+            System.out.println(contact.getSkype());
+            System.out.println(contact.getId());
+        }
 
     }
 
     @Override
     public void writeFile() {
 
-        fileName = name + ".txt";
-        try {
-            fos = new FileOutputStream("c:\\Users\\Глеб\\Documents\\NetBeansProjects\\Home--Work\\src\\home\\work\\Contacts\\" + fileName);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(ContactWriter.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        for (Contact contact : list) {
+            fileName = contact.getName() + ".txt";
 
-        byte[] bytes = name.getBytes();
-        byte[] bytes2 = number.getBytes();
-        byte[] bytes3 = e_mail.getBytes();
-        byte[] bytes4 = skype.getBytes();
+            try {
+                fos = new FileOutputStream("c:\\Users\\Глеб\\Documents\\NetBeansProjects\\Home--Work\\src\\home\\work\\Contacts\\" + fileName);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(ContactWriter.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
-        try {
-            fos.write(bytes);
-            fos.write('\n'); // write (int)
-            fos.write(bytes2);
-            fos.write('\n'); // write (int)
-            fos.write(bytes3);
-            fos.write('\n'); // write (int)
-            fos.write(bytes4);
+            byte[] bytes = contact.getName().getBytes();
+            byte[] bytes2 = contact.getNumber().getBytes();
+            byte[] bytes3 = contact.getE_mail().getBytes();
+            byte[] bytes4 = contact.getSkype().getBytes();
 
-            fos.close();
-        } catch (IOException ex) {
-            Logger.getLogger(ContactWriter.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                fos.write(bytes);
+                fos.write('\n'); // write (int)
+                fos.write(bytes2);
+                fos.write('\n'); // write (int)
+                fos.write(bytes3);
+                fos.write('\n'); // write (int)
+                fos.write(bytes4);
+
+                fos.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ContactWriter.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
     }
 
     @Override
     public void deleteContact() {
-        list.remove(contact);
+//        list.remove(contact);
     }
 
     @Override
     public void deleteFile() {
-        file = new File("home\\work\\Contacts\\"+fileName+".txt");
+        file = new File("home\\work\\Contacts\\" + fileName + ".txt");
         file.delete();
     }
 

@@ -26,27 +26,18 @@ public class MySQLoperator implements CommandSQL {
     public String database;
     public String username;
     public String password;
-    public Statement stmt;
-    public ResultSet rs;
 
+    /**
+     *
+     * @return
+     */
     @Override
-    public void connect() {
+    public Connection connect() throws SQLException {
         loadDriver();
         String connectionString = String.format("jdbc:mysql://%s:%d/%s?useSSL=true", hostname, hostport, database);
 
-        try (Connection conn = DriverManager.getConnection(connectionString, username, password)) {
-
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery("SHOW TABLES");
-
-            System.out.println("+----------------------+");
-            System.out.println("| - TABLES ----------- |");
-            System.out.println("+----------------------+");
-
-        } catch (SQLException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        Connection conn = DriverManager.getConnection(connectionString, username, password);
+        return conn;
     }
 
     @Override
@@ -54,7 +45,14 @@ public class MySQLoperator implements CommandSQL {
        
         int i = 1;
 
-        try {
+        try (Connection conn = connect()) {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SHOW TABLES");
+
+            System.out.println("+----------------------+");
+            System.out.println("| - TABLES ----------- |");
+            System.out.println("+----------------------+");
+            
             while (rs.next()) {
                 String tableName = rs.getString(1); // first column - 1, second - 2
 
@@ -98,7 +96,7 @@ public class MySQLoperator implements CommandSQL {
 
         enterConnectionData();
 
-        connect();
+//        connect();
 
         writeDB();
     }

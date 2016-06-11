@@ -5,19 +5,22 @@
  */
 package home.work;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 /**
  *
  * @author Глеб
  */
 public interface CommandSQL {
 
-    public static final String DRIVER_PATH = "com.mysql.jdbc.Driver ";
+    public static final String DRIVER_PATH = "com.mysql.jdbc.Driver";
 
     public void enterConnectionData();
     
-    public void connect();
+    public Connection connect() throws SQLException;
 
-    public void writeDB();
+    public void writeDB() throws SQLException;
 
     public void loadDriver();
 
